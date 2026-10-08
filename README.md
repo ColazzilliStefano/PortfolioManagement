@@ -29,7 +29,7 @@ From the Markowitz critique, the project evolved into a **Global Market Portfoli
 - Point-in-time OLS calibration of Q and Ω (views)
 - Walk-forward backtest with transaction costs
 
-**Finding**: GMP + Black-Litterman produces a more stable risk-adjusted profile than pure optimization, with a plateau around Sharpe 0.69 in a long-only multi-asset setting. Omega calibration (G7) adds only +0.0017 Sharpe: the binding constraints are structural (small τ, long-only, low signal R²), not parametric.
+**Finding**: GMP + Black-Litterman produces a more stable risk-adjusted profile than pure optimization, with a plateau around Sharpe 0.69 in a long-only multi-asset setting. Omega calibration adds only +0.0017 Sharpe: the binding constraints are structural (small τ, long-only, low signal R²), not parametric.
 
 Full details: [`GMPManagement/`](./GMPManagement/).
 
