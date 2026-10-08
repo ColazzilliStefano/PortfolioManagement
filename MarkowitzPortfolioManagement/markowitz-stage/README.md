@@ -1,38 +1,38 @@
 # Markowitz Portfolio Management
 
-Progetto di analisi e ottimizzazione di portafogli con il modello media-varianza di Markowitz.
+Project for portfolio analysis and optimization using the Markowitz mean-variance model.
 
-Il progetto scarica dati storici, costruisce rendimenti mensili, stima rendimento atteso e covarianza, calcola portafogli ottimali e verifica le strategie con un backtest walk-forward out-of-sample.
+The project downloads historical data, builds monthly returns, estimates expected return and covariance, computes optimal portfolios, and validates the strategies with a walk-forward out-of-sample backtest.
 
-## Obiettivo
+## Objective
 
-Confrontare tre strategie di allocazione:
+Compare three allocation strategies:
 
-- **Max Sharpe**: massimizza il rapporto tra rendimento atteso in eccesso e volatilita.
-- **Min Variance**: minimizza la volatilita del portafoglio.
-- **Equal Weight**: benchmark 1/N, con peso uguale su tutti gli asset rischiosi.
+- **Max Sharpe**: maximizes the ratio between expected excess return and volatility.
+- **Min Variance**: minimizes portfolio volatility.
+- **Equal Weight**: 1/N benchmark, with equal weight on all risky assets.
 
-Il risk-free e rappresentato da `BIL` e viene escluso dall'ottimizzazione degli asset rischiosi, ma utilizzato nei calcoli dello Sharpe e del Sortino.
+The risk-free rate is represented by `BIL` and is excluded from the optimization of risky assets, but used in the Sharpe and Sortino calculations.
 
-## Universo investibile
+## Investment universe
 
-Gli asset sono definiti in [config/assets.yaml](config/assets.yaml):
+The assets are defined in [config/assets.yaml](config/assets.yaml):
 
-| Ticker | Ruolo |
+| Ticker | Role |
 |---|---|
-| ACWI | Azionario globale |
-| AGG | Obbligazionario aggregate USA |
-| TLT | Treasury USA lunga scadenza |
-| LQD | Credito investment grade |
+| ACWI | Global equity |
+| AGG | US aggregate bonds |
+| TLT | US long-term Treasury |
+| LQD | Investment grade credit |
 | HYG | High yield |
-| VNQ | Real estate USA |
+| VNQ | US real estate |
 | DBC | Commodities |
-| GLD | Oro |
-| BIL | Proxy risk-free, escluso dall'ottimizzazione |
+| GLD | Gold |
+| BIL | Risk-free proxy, excluded from optimization |
 
-L'universo viene validato prima dell'analisi. Se nei dati processati compaiono ticker non configurati, lo script Markowitz si interrompe invece di produrre risultati ambigui.
+The universe is validated before the analysis. If tickers not present in the configuration appear in the processed data, the Markowitz script stops instead of producing ambiguous results.
 
-## Struttura
+## Structure
 
 ```text
 markowitz-stage/
@@ -64,9 +64,9 @@ markowitz-stage/
 └── README.md
 ```
 
-## Pipeline di esecuzione
+## Execution pipeline
 
-Eseguire sempre i comandi dalla root del progetto:
+Always run the commands from the project root:
 
 ```powershell
 cd C:\Users\user\PortfolioManagement\markowitz-stage
@@ -78,25 +78,25 @@ cd C:\Users\user\PortfolioManagement\markowitz-stage
 
 ### 1. Download
 
-[run_01_download.py](scripts/run_01_download.py) legge l'universo da `assets.yaml`, aggiunge BIL come risk-free e scarica i prezzi da Yahoo Finance in:
+[run_01_download.py](scripts/run_01_download.py) reads the universe from `assets.yaml`, adds BIL as risk-free, and downloads prices from Yahoo Finance into:
 
 ```text
 data/raw/prices/prices_raw.parquet
 ```
 
-### 2. Pulizia e trasformazione
+### 2. Cleaning and transformation
 
 [run_02_clean.py](scripts/run_02_clean.py):
 
-- ordina e pulisce i prezzi;
-- applica forward fill limitato;
-- elimina asset con storia insufficiente;
-- calcola rendimenti logaritmici per lo storage;
-- aggrega i rendimenti a frequenza mensile;
-- identifica outlier;
-- salva dati, metadata e report di qualita.
+- sorts and cleans prices;
+- applies limited forward fill;
+- removes assets with insufficient history;
+- computes logarithmic returns for storage;
+- aggregates returns to monthly frequency;
+- identifies outliers;
+- saves data, metadata, and quality reports.
 
-Output principali:
+Main outputs:
 
 ```text
 data/processed/prices.parquet
@@ -107,31 +107,31 @@ data/processed/outliers.parquet
 data/processed/universe.yaml
 ```
 
-### 3. Validazione
+### 3. Validation
 
-[run_03_validate.py](scripts/run_03_validate.py) controlla che i file necessari esistano e che i rendimenti mensili:
+[run_03_validate.py](scripts/run_03_validate.py) checks that the required files exist and that monthly returns:
 
-- siano leggibili;
-- non contengano valori mancanti;
-- abbiano indice ordinato;
-- non contengano date duplicate.
+- are readable;
+- contain no missing values;
+- have a sorted index;
+- contain no duplicate dates.
 
-### 4. Analisi Markowitz
+### 4. Markowitz analysis
 
 [run_04_markowitz.py](scripts/run_04_markowitz.py):
 
-1. separa BIL dagli asset rischiosi;
-2. stima rendimento medio annualizzato e matrice di covarianza annualizzata;
-3. calcola portafoglio Min Variance e Max Sharpe;
-4. costruisce la frontiera efficiente;
-5. esegue il backtest walk-forward;
-6. confronta Max Sharpe, Min Variance ed Equal Weight;
-7. misura errore di stima, instabilita dei pesi e turnover;
-8. salva tabelle e figure.
+1. separates BIL from the risky assets;
+2. estimates annualized mean return and annualized covariance matrix;
+3. computes the Min Variance and Max Sharpe portfolios;
+4. builds the efficient frontier;
+5. runs the walk-forward backtest;
+6. compares Max Sharpe, Min Variance, and Equal Weight;
+7. measures estimation error, weight instability, and turnover;
+8. saves tables and figures.
 
-## Teoria utilizzata
+## Theory used
 
-Per un vettore di pesi $w$, rendimento atteso $\mu$ e matrice di covarianza $\Sigma$:
+For a weight vector $w$, expected return $\mu$, and covariance matrix $\Sigma$:
 
 $$
 E[R_p] = w^T\mu
@@ -145,128 +145,122 @@ $$
 Sharpe_p = \frac{E[R_p] - r_f}{\sigma_p}
 $$
 
-I rendimenti sono archiviati come log-return, ma vengono convertiti in
-simple-return prima della stima, aggregazione e calcolo delle metriche:
+Returns are stored as log-returns, but converted to simple returns before estimation, aggregation, and metric computation:
 
 $$R_{simple,t}=\exp(r_{log,t})-1$$
 
 $$V_t=\prod_{i=1}^{t}(1+R_{simple,i})$$
 
-L'ottimizzazione corrente e long-only, con somma dei pesi uguale a 1 e limite
-massimo per asset pari a 0.30, coerente con il confronto GMP. Non sono
-consentite posizioni short.
+The current optimization is long-only, with weights summing to 1 and a maximum weight per asset of 0.30, consistent with the GMP comparison. Short positions are not allowed.
 
-## Risultati correnti
+## Current results
 
-I risultati riportati qui sotto sono quelli rigenerati con lo stesso universo
-rischioso del GMP: ACWI/AGG/TLT/LQD/HYG/VNQ/DBC/GLD e BIL come risk-free.
+The results reported below are those regenerated with the same risky universe as the GMP: ACWI/AGG/TLT/LQD/HYG/VNQ/DBC/GLD and BIL as risk-free.
 
-### Performance out-of-sample
+### Out-of-sample performance
 
-| Strategia | CAGR | Volatilita | Sharpe | Sortino | Max Drawdown | Calmar |
+| Strategy | CAGR | Volatility | Sharpe | Sortino | Max Drawdown | Calmar |
 |---|---:|---:|---:|---:|---:|---:|
-| Max Sharpe OOS | 6,38% | 7,79% | 0,63 | 0,84 | -19,10% | 0,33 |
-| Min Variance OOS | 3,72% | 6,09% | 0,36 | 0,47 | -16,69% | 0,22 |
-| Equal Weight | 5,06% | 7,90% | 0,46 | 0,65 | -16,81% | 0,30 |
+| Max Sharpe OOS | 6.38% | 7.79% | 0.63 | 0.84 | -19.10% | 0.33 |
+| Min Variance OOS | 3.72% | 6.09% | 0.36 | 0.47 | -16.69% | 0.22 |
+| Equal Weight | 5.06% | 7.90% | 0.46 | 0.65 | -16.81% | 0.30 |
 
-Interpretazione:
+Interpretation:
 
-- Max Sharpe ottiene il rendimento e lo Sharpe piu alti, ma anche il rischio e il drawdown piu elevati.
-- Min Variance riduce significativamente volatilita e drawdown, pagando un costo in termini di rendimento.
-- Equal Weight e un benchmark intermedio e offre un confronto utile contro l'ottimizzazione parametrica.
+- Max Sharpe achieves the highest return and Sharpe, but also the highest risk and drawdown.
+- Min Variance significantly reduces volatility and drawdown, at the cost of lower return.
+- Equal Weight is an intermediate benchmark and offers a useful comparison against parametric optimization.
 
-### Pesi in-sample
+### In-sample weights
 
 #### Max Sharpe
 
-| Asset | Peso |
+| Asset | Weight |
 |---|---:|
-| ACWI | 30,00% |
-| AGG | 29,89% |
-| HYG | 10,11% |
-| GLD | 30,00% |
+| ACWI | 30.00% |
+| AGG | 29.89% |
+| HYG | 10.11% |
+| GLD | 30.00% |
 
-Gli altri asset ricevono peso nullo o numericamente prossimo a zero.
+The other assets receive zero or numerically near-zero weight.
 
 #### Min Variance
 
-| Asset | Peso |
+| Asset | Weight |
 |---|---:|
-| AGG | 30,00% |
-| LQD | 30,00% |
-| HYG | 14,30% |
-| DBC | 12,74% |
-| TLT | 10,81% |
-| GLD | 2,14% |
-| Altri asset | 0,00% |
+| AGG | 30.00% |
+| LQD | 30.00% |
+| HYG | 14.30% |
+| DBC | 12.74% |
+| TLT | 10.81% |
+| GLD | 2.14% |
+| Other assets | 0.00% |
 
+### Estimation error
 
-### Errore di stima
+The experiment in [critique.py](src/markowitz/critique.py) shows the difference between the Sharpe estimated on the training sample and the Sharpe on the subsequent period:
 
-L'esperimento in [critique.py](src/markowitz/critique.py) mostra la differenza tra Sharpe stimato sul campione di training e Sharpe sul periodo successivo:
+- typical in-sample Sharpe: around `0.64-0.76`;
+- out-of-sample Sharpe often close to zero or negative;
+- in some splits the out-of-sample is positive, but very volatile.
 
-- Sharpe in-sample tipico: circa `0,64-0,76`;
-- Sharpe out-of-sample spesso vicino a zero o negativo;
-- in alcuni split l'out-of-sample e positivo, ma molto variabile.
-
-Questo risultato e coerente con la teoria: il portafoglio Max Sharpe dipende fortemente dalle stime di rendimento medio, che sono rumorose e instabili.
+This result is consistent with theory: the Max Sharpe portfolio depends heavily on mean return estimates, which are noisy and unstable.
 
 ### Turnover
 
-Il turnover annuale al ribilanciamento e spesso elevato, con valori che arrivano a circa `1,83`. Questo significa che l'allocazione ottimale cambia in modo sostanziale tra una finestra e la successiva.
+Annual turnover at rebalancing is often high, with values reaching around `1.83`. This means the optimal allocation changes substantially from one window to the next.
 
-I risultati correnti **non includono costi di transazione**. Il rendimento netto reale sarebbe quindi probabilmente piu basso, soprattutto per Max Sharpe.
+The current results **do not include transaction costs**. The real net return would therefore likely be lower, especially for Max Sharpe.
 
-## Prima estensione: Ledoit-Wolf shrinkage
+## First extension: Ledoit-Wolf shrinkage
 
-E stata aggiunta una sezione sperimentale di shrinkage in [shrinkage.py](src/markowitz/shrinkage.py).
-La baseline continua a usare la covarianza campionaria; in parallelo viene stimata una covarianza Ledoit-Wolf:
+An experimental shrinkage section was added in [shrinkage.py](src/markowitz/shrinkage.py). The baseline still uses the sample covariance; in parallel, a Ledoit-Wolf covariance is estimated:
 
 $$
 \hat{\Sigma}_{shrunk} = (1-\lambda)\hat{\Sigma} + \lambda F
 $$
 
-Il parametro $\lambda$ viene stimato automaticamente da Ledoit-Wolf. Nell'ultima esecuzione:
+The parameter $\lambda$ is estimated automatically by Ledoit-Wolf. In the latest run:
 
 ```text
-shrinkage_alpha = 0,0733
+shrinkage_alpha = 0.0733
 ```
 
-Il confronto in-sample e disponibile in [shrinkage_comparison.csv](outputs/tables/shrinkage_comparison.csv):
+The in-sample comparison is available in [shrinkage_comparison.csv](outputs/tables/shrinkage_comparison.csv):
 
-| Modello | Rendimento atteso | Volatilita | Sharpe |
+| Model | Expected return | Volatility | Sharpe |
 |---|---:|---:|---:|
-| Covarianza campionaria - Max Sharpe | 6,38% | 9,81% | 0,522 |
-| Covarianza campionaria - Min Variance | 2,44% | 4,39% | 0,269 |
-| Ledoit-Wolf - Max Sharpe | 6,72% | 10,33% | 0,529 |
-| Ledoit-Wolf - Min Variance | 2,60% | 5,70% | 0,234 |
+| Sample covariance - Max Sharpe | 6.38% | 9.81% | 0.522 |
+| Sample covariance - Min Variance | 2.44% | 4.39% | 0.269 |
+| Ledoit-Wolf - Max Sharpe | 6.72% | 10.33% | 0.529 |
+| Ledoit-Wolf - Min Variance | 2.60% | 5.70% | 0.234 |
 
-Questi numeri sono **in-sample** e non devono essere interpretati come miglioramento definitivo. Il prossimo controllo necessario e un walk-forward OOS con la stessa covarianza shrinked ricalcolata a ogni ribilanciamento.
+These numbers are **in-sample** and must not be interpreted as a definitive improvement. The next required check is a walk-forward OOS with the same shrunk covariance recomputed at each rebalancing.
 
-I pesi sperimentali sono salvati in:
+The experimental weights are saved in:
 
 - [shrinkage_tangency_weights.csv](outputs/tables/shrinkage_tangency_weights.csv)
 - [shrinkage_minvar_weights.csv](outputs/tables/shrinkage_minvar_weights.csv)
 
-La baseline originale resta nei file `tangency_weights.csv` e `minvar_weights.csv`, così il confronto rimane riproducibile.
+The original baseline remains in the `tangency_weights.csv` and `minvar_weights.csv` files, so the comparison remains reproducible.
 
-## Figure principali
+## Main figures
 
-### Spazio dei portafogli e frontiera
+### Portfolio space and frontier
 
-La figura unificata mostra portafogli casuali, frontiera efficiente, Max Sharpe e Min Variance nello stesso grafico.
+The unified figure shows random portfolios, the efficient frontier, Max Sharpe, and Min Variance in the same chart.
 
-![Spazio dei portafogli e frontiera efficiente](outputs/figures/frontier_markowitz.png)
+![Portfolio space and efficient frontier](outputs/figures/frontier_markowitz.png)
 
-### Pesi Max Sharpe
+### Max Sharpe weights
 
-![Pesi Max Sharpe](outputs/figures/weights_tangency.png)
+![Max Sharpe weights](outputs/figures/weights_tangency.png)
 
-### Pesi Min Variance
+### Min Variance weights
 
-![Pesi Min Variance](outputs/figures/weights_minvar.png)
+![Min Variance weights](outputs/figures/weights_minvar.png)
 
-### Equity curve out-of-sample
+### Out-of-sample equity curve
 
 ![Equity curve](outputs/figures/equity_curves.png)
 
@@ -274,92 +268,92 @@ La figura unificata mostra portafogli casuali, frontiera efficiente, Max Sharpe 
 
 ![Drawdown](outputs/figures/drawdowns.png)
 
-### Instabilita dei pesi
+### Weight instability
 
-![Instabilita dei pesi](outputs/figures/weights_instability.png)
+![Weight instability](outputs/figures/weights_instability.png)
 
 ### Turnover
 
 ![Turnover](outputs/figures/turnover.png)
 
-### Errore di stima
+### Estimation error
 
-![Errore di stima](outputs/figures/estimation_error.png)
+![Estimation error](outputs/figures/estimation_error.png)
 
-Altre figure disponibili:
+Other available figures:
 
 - [Capital Allocation Line](outputs/figures/capital_allocation_line.png)
 - [Rolling Sharpe](outputs/figures/rolling_sharpe.png)
 - [Correlation heatmap](outputs/figures/correlation_heatmap.png)
 - [In-sample vs out-of-sample](outputs/figures/insample_vs_oos.png)
 
-## Tabelle generate
+## Generated tables
 
-Le tabelle ufficiali sono in [outputs/tables](outputs/tables):
+The official tables are in [outputs/tables](outputs/tables):
 
-- `tangency_weights.csv`: pesi del portafoglio Max Sharpe;
-- `minvar_weights.csv`: pesi del portafoglio Min Variance;
-- `performance_summary.csv`: metriche OOS;
-- `walkforward_summary.csv`: rendimenti annuali OOS;
-- `rolling_weights.csv`: pesi nel tempo;
-- `turnover.csv`: turnover al ribilanciamento;
-- `estimation_error.csv`: confronto in-sample/out-of-sample;
-- `sensitivity_mu.csv`: sensibilita dei pesi alle perturbazioni di mu.
-- `shrinkage_comparison.csv`: confronto in-sample tra covarianza campionaria e Ledoit-Wolf.
-- `shrinkage_tangency_weights.csv`: pesi Max Sharpe con covarianza shrinked.
-- `shrinkage_minvar_weights.csv`: pesi Min Variance con covarianza shrinked.
+- `tangency_weights.csv`: Max Sharpe portfolio weights;
+- `minvar_weights.csv`: Min Variance portfolio weights;
+- `performance_summary.csv`: OOS metrics;
+- `walkforward_summary.csv`: annual OOS returns;
+- `rolling_weights.csv`: weights over time;
+- `turnover.csv`: turnover at rebalancing;
+- `estimation_error.csv`: in-sample/out-of-sample comparison;
+- `sensitivity_mu.csv`: sensitivity of weights to perturbations of mu;
+- `shrinkage_comparison.csv`: in-sample comparison between sample covariance and Ledoit-Wolf;
+- `shrinkage_tangency_weights.csv`: Max Sharpe weights with shrunk covariance;
+- `shrinkage_minvar_weights.csv`: Min Variance weights with shrunk covariance.
 
-La cartella `scripts/outputs` non e una cartella valida di risultati e non deve essere utilizzata.
+The `scripts/outputs` folder is not a valid results folder and must not be used.
 
-## Criticita attuali
+## Current limitations
 
-### 1. Sensibilita alle stime
+### 1. Sensitivity to estimates
 
-Il Max Sharpe e molto sensibile a rendimento medio, covarianza e periodo storico. I pesi nulli di alcuni asset non dimostrano che siano inutili in assoluto: indicano solo che non sono risultati ottimali con queste stime e questi vincoli.
+Max Sharpe is very sensitive to mean return, covariance, and historical period. The zero weights of some assets do not prove they are useless in absolute terms: they only indicate that they were not optimal under these estimates and constraints.
 
-### 2. Concentrazione
+### 2. Concentration
 
-Il portafoglio Max Sharpe e concentrato in quattro asset, soprattutto GLD e ACWI. Questo aumenta il rischio di errore di stima e la dipendenza da specifici regimi di mercato.
+The Max Sharpe portfolio is concentrated in four assets, especially GLD and ACWI. This increases the risk of estimation error and the dependence on specific market regimes.
 
-### 3. Costi di transazione assenti
+### 3. Missing transaction costs
 
-Il turnover elevato puo ridurre sensibilmente la performance dopo costi, spread e slippage. I rendimenti attuali sono lordi.
+High turnover can significantly reduce performance after costs, spreads, and slippage. Current returns are gross.
 
-### 4. Risk-free
+### 4. Risk-free rate
 
-BIL viene usato come serie mensile time-varying nelle metriche OOS e nella stima del Max Sharpe; la media annualizzata viene riportata solo come descrizione sintetica del campione.
+BIL is used as a monthly time-varying series in the OOS metrics and in the Max Sharpe estimation; the annualized mean is reported only as a synthetic description of the sample.
 
-### 5. Dati e date
+### 5. Data and dates
 
-Il dataset grezzo arriva fino al 16 settembre 2026, ma il runner esclude l'ultimo mese parziale: il campione usato nelle metriche termina a `2026-08-31`.
+The raw dataset extends to 16 September 2026, but the runner excludes the last partial month: the sample used in the metrics ends on `2026-08-31`.
 
-### 6. Assenza di vincoli realistici
+### 6. Absence of realistic constraints
 
-Al momento non sono presenti vincoli di:
+At the moment there are no constraints on:
 
-- peso minimo o massimo personalizzato per asset;
-- turnover massimo;
-- costi di transazione;
+- minimum or maximum weight per asset (beyond the 0.30 cap);
+- maximum turnover;
+- transaction costs;
 - tracking error;
-- esposizione massima per asset class;
-- volatilita target.
+- maximum exposure per asset class;
+- target volatility.
 
-## Prossimi passi consigliati
+## Recommended next steps
 
-1. **Validare lo shrinkage OOS** nel walk-forward, ricalcolando Ledoit-Wolf a ogni finestra.
-2. **Aggiungere costi di transazione** e confrontare rendimento lordo e netto.
-3. **Applicare una stima robusta di mu**, oppure usare rendimenti attesi piu conservativi.
-4. **Aggiungere vincoli di concentrazione**, ad esempio un limite del 25-35% per singolo asset.
-5. **Testare ribilanciamenti diversi**, per esempio mensile, trimestrale e annuale.
-6. **Confrontare piu finestre di training**, ad esempio 36, 60 e 120 mesi.
-7. **Aggiungere benchmark esterni**, come Equal Weight, 60/40 e un portafoglio risk parity.
-8. **Separare chiaramente anni completi e anno parziale 2026**.
-9. **Aggiungere test automatici** per shrinkage, pesi, metriche e assenza di look-ahead bias.
-10. **Produrre una relazione finale** distinguendo sempre risultati in-sample, out-of-sample e analisi di sensibilita.
+1. **Validate shrinkage OOS** in the walk-forward, recomputing Ledoit-Wolf at each window.
+2. **Add transaction costs** and compare gross and net returns.
+3. **Apply a robust estimate of mu**, or use more conservative expected returns.
+4. **Add concentration constraints**, for example a 25-35% limit per single asset.
+5. **Test different rebalancing frequencies**, for example monthly, quarterly, and annual.
+6. **Compare multiple training windows**, for example 36, 60, and 120 months.
+7. **Add external benchmarks**, such as Equal Weight, 60/40, and a risk parity portfolio.
+8. **Clearly separate full years and the partial year 2026**.
+9. **Add automated tests** for shrinkage, weights, metrics, and absence of look-ahead bias.
+10. **Produce a final report** always distinguishing in-sample results, out-of-sample results, and sensitivity analysis.
 
-## Verifiche eseguite
+## Executed checks
 
-Lo stato corrente e verificato con:
+The current state is verified with:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q
@@ -367,16 +361,16 @@ Lo stato corrente e verificato con:
 .\.venv\Scripts\python.exe scripts\run_03_validate.py
 ```
 
-Esito corrente:
+Current outcome:
 
 ```text
 2 passed
-Contratto dati rispettato
-Universo coerente con assets.yaml
-13 figure generate
-8 tabelle generate
+Data contract respected
+Universe consistent with assets.yaml
+13 figures generated
+8 tables generated
 ```
 
-## Nota interpretativa finale
+## Final interpretative note
 
-Il progetto e tecnicamente funzionante e i risultati sono coerenti con il modello di Markowitz. La conclusione piu importante non e che Max Sharpe sia sempre superiore, ma che l'ottimizzazione dei rendimenti medi produce portafogli concentrati e instabili. Il confronto OOS e quindi essenziale: Min Variance e Equal Weight rappresentano benchmark importanti per capire se il beneficio dell'ottimizzazione sopravvive fuori campione e dopo l'introduzione dei costi di transazione.
+The project is technically working and the results are consistent with the Markowitz model. The most important conclusion is not that Max Sharpe is always superior, but that optimizing mean returns produces concentrated and unstable portfolios. The OOS comparison is therefore essential: Min Variance and Equal Weight are important benchmarks to understand whether the benefit of optimization survives out of sample and after the introduction of transaction costs.
