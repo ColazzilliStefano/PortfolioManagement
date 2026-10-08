@@ -1,0 +1,36 @@
+sources:
+  msci_factsheet:
+    url: "https://www.msci.com/our-solutions/indexes/acwi"
+    description: "MSCI ACWI factsheet (index market cap)"
+    limit: "Annual update; aggregated market cap, no point-in-time"
+    paid_alternative: "Bloomberg, Refinitiv, MSCI Barra"
+
+  bis:
+    url: "https://www.bis.org/statistics/"
+    description: "BIS Debt Securities Statistics"
+    limit: "Quarterly frequency; aggregated by country, no detail rating/duration"
+    paid_alternative: "ICE BofA, Bloomberg Barclays"
+
+  ftse_epra_nareit:
+    url: "https://www.epra.com/"
+    description: "FTSE EPRA Nareit Global Real Estate Index"
+    limit: "Annual update; listed REITs only"
+    paid_alternative: "Bloomberg, Refinitiv"
+
+  cftc_open_interest:
+    url: "https://www.cftc.gov/MarketReports/"
+    description: "CFTC Commitments of Traders (open interest futures)"
+    limit: "Open interest ≠ market cap; US-listed futures only"
+    paid_alternative: "Bloomberg Commodity Index"
+
+  world_gold_council:
+    url: "https://www.gold.org/"
+    description: "World Gold Council above-ground stock"
+    limit: "Above-ground physical stock; spot price not historical"
+    paid_alternative: "Bloomberg, Refinitiv"
+
+  doeswijk:
+    url: "https://eur.figshare.com/"
+    description: "Doeswijk, Lam, Swinkels (2019), Review of Asset Pricing Studies"
+    limit: "Annual data through 2019; not updated automatically"
+    paid_alternative: "N/A (academic dataset)"

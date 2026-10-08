@@ -1,0 +1,13 @@
+rebalance_frequency: "semiannual"
+start_date: "2008-04-01"
+end_date: null
+
+fallback_weights:
+  equity: 0.436
+  bonds: 0.420
+  real_estate: 0.050
+  commodities: 0.040
+  gold: 0.054
+
+output_file: "data/processed/gmp_weights_history.parquet"
+output_csv: "outputs/weights/gmp_weights_history.csv"

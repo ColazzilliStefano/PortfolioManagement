@@ -1,0 +1,21 @@
+benchmarks:
+  equal_weight:
+    name: "Equal Weight"
+    description: "1/N across all risky assets"
+
+  sixty_forty:
+    name: "60/40"
+    description: "60% global equity, 40% aggregate bonds"
+    weights:
+      ACWI: 0.60
+      AGG: 0.40
+
+  all_weather:
+    name: "All Weather"
+    description: "Risk parity simplified"
+    weights:
+      ACWI: 0.30
+      TLT: 0.40
+      LQD: 0.15
+      GLD: 0.075
+      DBC: 0.075

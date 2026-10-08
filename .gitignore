@@ -1,0 +1,157 @@
+# ============================================================
+# Python
+# ============================================================
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+**/__pycache__/
+**/.pytest_cache/
+**/*.py[cod]
+**/*.egg-info/
+
+# ============================================================
+# Virtual environments (recursive, aggressive)
+# ============================================================
+.venv/
+.venv-1/
+venv/
+env/
+ENV/
+**/.venv/
+**/.venv-1/
+**/venv/
+**/env/
+**/ENV/
+**/site-packages/
+**/Lib/
+**/Scripts/
+**/lib/
+**/bin/
+**/pyvenv.cfg
+**/activate
+**/activate.bat
+**/Activate.ps1
+
+# ============================================================
+# Nested virtual environment (markowitz-stage and similar)
+# ============================================================
+markowitz-stage/
+**/markowitz-stage/
+
+# ============================================================
+# IDE / OS
+# ============================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+**/.vscode/
+**/.idea/
+
+# ============================================================
+# Jupyter
+# ============================================================
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# ============================================================
+# Logs
+# ============================================================
+*.log
+**/*.log
+
+# ============================================================
+# AI tooling (kilo)
+# ============================================================
+.kilo/
+**/.kilo/
+
+# ============================================================
+# pytest
+# ============================================================
+pytest.ini
+**/pytest.ini
+.pytest_cache/
+**/.pytest_cache/
+
+# ============================================================
+# Large data files
+# ============================================================
+data/raw/
+data/interim/
+data/processed/
+**/data/raw/
+**/data/interim/
+**/data/processed/
+
+# ============================================================
+# Large outputs (keep only tables + figures for README)
+# ============================================================
+outputs/weights/
+outputs/data_quality/
+outputs/runs/
+**/outputs/weights/
+**/outputs/data_quality/
+**/outputs/runs/
+
+# ============================================================
+# CSV files (ignore by default)
+# ============================================================
+*.csv
+
+# But keep key result tables
+!outputs/tables/
+!outputs/tables/*.csv
+!**/outputs/tables/
+!**/outputs/tables/*.csv
+
+# Keep figures for the README
+!outputs/figures/
+!outputs/figures/**/*.png
+!**/outputs/figures/
+!**/outputs/figures/**/*.png
+
+# ============================================================
+# Script-generated artifacts
+# ============================================================
+scripts/data/
+scripts/outputs/
+**/scripts/data/
+**/scripts/outputs/
+
+# ============================================================
+# Secrets — NEVER commit
+# ============================================================
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# ============================================================
+# Local backups
+# ============================================================
+golden_master/
+**/golden_master/
+
+# ============================================================
+# Internal research notes
+# ============================================================
+docs/open_issues.md
+docs/ROADMAP.md
+docs/ROADtoSR2.md
+notebooks/
+**/notebooks/
+**/docs/open_issues.md
+**/docs/ROADMAP.md
+**/docs/ROADtoSR2.md

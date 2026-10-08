@@ -1,0 +1,141 @@
+# Paths
+paths:
+  raw: data/raw
+  interim: data/interim
+  processed: data/processed
+  outputs: outputs
+
+# Data settings
+data:
+  base_currency: USD
+  frequency: monthly
+  min_history_months: 120
+  outlier_sigma: 10
+  return_type: log
+  risk_free_ticker: BIL
+
+# Signals
+
+signals:
+  # Active signals in the default production configuration
+  # Current configuration: five active signals (momentum and HMM are internal)
+  # Historical exploratory configurations are documented in the README.
+  active:
+    - momentum
+    - hmm
+    - credit
+    - vix
+    - term_premium
+    # - carry       # disabled: does not improve Sharpe (correlated with value)
+    # - trend       # disabled: does not improve Sharpe (correlated with momentum)
+    # - value       # disabled: does not improve Sharpe (correlated with carry)
+
+  # Parameters for individual signals
+  # Each signal has its own section with specific parameters.
+
+  momentum:
+    lookback: 6
+    max_magnitude: 0.06
+    scale: 0.10
+
+  hmm:
+    n_states: 3
+    n_iter: 50
+    max_magnitude: 0.06
+    min_obs: 60
+    cols_mv:
+      - equity
+      - bonds
+      - gold
+
+  credit:
+    lookback_signal: 6
+    lookback_zscore: 60
+    scale: 1.0
+    max_magnitude: 0.06
+
+  vix:
+    start: "2011-01-01"
+    lookback: 60
+    scale: 1.0
+    max_magnitude: 0.05
+
+  term_premium:
+    start: "2000-01-01"
+    lookback: 60
+    scale: 1.0
+    max_magnitude: 0.04
+
+  carry:
+    start: "2000-01-01"
+    lookback: 60
+    scale: 1.0
+    max_magnitude: 0.05
+
+  trend:
+    asset: ACWI
+    lookback: 12
+    scale: 0.15
+    max_magnitude: 0.05
+
+  value:
+    lookback: 120
+    scale: 1.0
+    max_magnitude: 0.05
+
+  # Macro signals
+  inflation:
+    max_magnitude: 0.04
+    neutral: 2.0
+    scale: 1.5
+
+  yield_curve:
+    max_magnitude: 0.05
+
+# Black-Litterman
+bl:
+  window: 60                # training months for covariance
+  rebalance: 6              # months between rebalances
+  tau: 0.05                 # uncertainty in the prior
+  market_sharpe: 0.4        # Expected market Sharpe (to calibrate lambda)
+  cov_method: ledoit_wolf   # sample | ledoit_wolf | constant_corr
+  max_weight: 0.30          # cap for individual asset
+  long_only: true
+
+  # Signal ensemble growth
+  ensemble_mode: mean       # mean | ir_weighted (G8)
+  ir_lookback: 60           # months for IR calculation (if ir_weighted)
+
+  # View Omega 
+  omega_mode: default       # default | calibrated
+  omega_lookback: 60        # months for Omega calibration
+  omega_cap_multiplier: 5.0 # cap Omega calibrated = 5x default
+
+  # Q of the view
+  q_mode: default           # default | calibrated
+
+# Fixed views 
+
+views:
+  fixed_scenarios:
+    - [growth, 0.055]
+    - [inflation_up, 0.030]
+
+# Logging
+
+logging:
+  level: INFO
+  file: outputs/run.log
+
+advanced_benchmarks:
+  window: 60
+  rebalance: 6
+  risk_parity:
+    long_only: true
+    max_weight: 1.0
+  hrp:
+    enabled: true
+  cvar:
+    alpha: 0.05
+    long_only: true
+    max_weight: 1.0
