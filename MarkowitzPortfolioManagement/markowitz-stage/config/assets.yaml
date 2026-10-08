@@ -1,0 +1,60 @@
+base_currency: USD
+frequency: monthly
+start_date: "2007-01-01"
+end_date: null
+
+risk_free:
+  ticker: BIL
+  name: 1-3M T-Bills
+  asset_class: cash
+  currency: USD
+  source: yfinance
+
+assets:
+  - ticker: ACWI
+    name: MSCI ACWI
+    asset_class: equity_global
+    currency: USD
+    source: yfinance
+
+  - ticker: AGG
+    name: Bloomberg US Aggregate Bond
+    asset_class: bond_aggregate
+    currency: USD
+    source: yfinance
+
+  - ticker: TLT
+    name: US Treasury 20Y+
+    asset_class: bond_long_treasury
+    currency: USD
+    source: yfinance
+
+  - ticker: LQD
+    name: US Investment Grade Credit
+    asset_class: credit_ig
+    currency: USD
+    source: yfinance
+
+  - ticker: HYG
+    name: US High Yield Credit
+    asset_class: credit_hy
+    currency: USD
+    source: yfinance
+
+  - ticker: VNQ
+    name: US REITs
+    asset_class: real_estate
+    currency: USD
+    source: yfinance
+
+  - ticker: DBC
+    name: Diversified Commodities
+    asset_class: commodities
+    currency: USD
+    source: yfinance
+
+  - ticker: GLD
+    name: Gold
+    asset_class: gold
+    currency: USD
+    source: yfinance

@@ -1,0 +1,17 @@
+paths:
+  raw: data/raw/prices
+  interim: data/interim
+  processed: data/processed
+  outputs: outputs
+
+data:
+  base_currency: USD
+  frequency: monthly
+  min_history_months: 120
+  outlier_sigma: 10
+  return_type: log
+  risk_free_ticker: BIL
+
+logging:
+  level: INFO
+  file: outputs/run.log

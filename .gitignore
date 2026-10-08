@@ -17,7 +17,7 @@ dist/
 **/*.egg-info/
 
 # ============================================================
-# Virtual environments (recursive, aggressive)
+# Virtual environments (specific paths only)
 # ============================================================
 .venv/
 .venv-1/
@@ -29,21 +29,30 @@ ENV/
 **/venv/
 **/env/
 **/ENV/
-**/site-packages/
-**/Lib/
-**/Scripts/
-**/lib/
-**/bin/
+
+# venv internals — ONLY inside a venv folder
+**/.venv/**/site-packages/
+**/.venv/**/Scripts/
+**/.venv/**/Lib/
+**/.venv-1/**/site-packages/
+**/.venv-1/**/Scripts/
+**/.venv-1/**/Lib/
+**/venv/**/site-packages/
+**/venv/**/Scripts/
+**/venv/**/Lib/
 **/pyvenv.cfg
-**/activate
-**/activate.bat
-**/Activate.ps1
 
 # ============================================================
-# Nested virtual environment (markowitz-stage and similar)
+# markowitz-stage: track docs/code, ignore only its venv/caches
 # ============================================================
-markowitz-stage/
-**/markowitz-stage/
+**/markowitz-stage/.venv/
+**/markowitz-stage/.venv-1/
+**/markowitz-stage/venv/
+**/markowitz-stage/.pytest_cache/
+**/markowitz-stage/.kilo/
+**/markowitz-stage/.vscode/
+**/markowitz-stage/__pycache__/
+**/markowitz-stage/**/__pycache__/
 
 # ============================================================
 # IDE / OS
